@@ -1,10 +1,12 @@
 import React, { Component } from "react";
 import StandaloneSearchBox from "react-google-maps/lib/components/places/StandaloneSearchBox";
-import { withScriptjs }  from 'react-google-maps';
+import { withScriptjs } from "react-google-maps";
+import './style.css';
+
 
 class MapSearchBox extends Component {
   componentWillMount() {
-    const refs = {}
+    const refs = {};
     this.setState({
       places: [],
       onSearchBoxMounted: ref => {
@@ -13,13 +15,13 @@ class MapSearchBox extends Component {
       onPlacesChanged: () => {
         const places = refs.searchBox.getPlaces();
         this.setState({
-          places,
+          places
         });
-      },
-    })
+        this.props.onPlacesChanged(this.state.places);
+      }
+    });
   }
   render() {
-    console.log(this.state.places)
     return (
       <div data-standalone-searchbox="">
         <StandaloneSearchBox
@@ -30,22 +32,21 @@ class MapSearchBox extends Component {
           <input
             type="text"
             placeholder={this.props.placeholder}
-            style={{
-              boxSizing: `border-box`,
-              border: `1px solid transparent`,
-              width: `240px`,
-              height: `32px`,
-              padding: `0 12px`,
-              borderRadius: `3px`,
-              boxShadow: `0 2px 6px rgba(0, 0, 0, 0.3)`,
-              fontSize: `14px`,
-              outline: `none`,
-              textOverflow: `ellipses`
-            }}
           />
         </StandaloneSearchBox>
       </div>
     );
   }
 }
-export default withScriptjs(MapSearchBox);
+const SearchBoxWithScript = withScriptjs(MapSearchBox);
+
+const SearchBox = ({onPlacesChanged, placeholder }) => 
+  <SearchBoxWithScript
+    onPlacesChanged={onPlacesChanged}
+    placeholder={placeholder}
+    googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyCJcuxbD-Zq9mq_Qv4PdC-t25ogbFzn460&v=3.exp&libraries=geometry,drawing,places"
+    loadingElement={<div style={{ height: `100%` }} />}
+    containerElement={<div style={{ height: `400px` }} />}
+    mapElement={<div style={{ height: `100%` }} />}
+  />
+export default SearchBox;
