@@ -12,7 +12,6 @@ class MapSearchBox extends Component {
       },
       onPlacesChanged: () => {
         const places = refs.searchBox.getPlaces();
-
         this.setState({
           places,
         });
@@ -30,7 +29,7 @@ class MapSearchBox extends Component {
         >
           <input
             type="text"
-            placeholder="Customized your placeholder"
+            placeholder={this.props.placeholder}
             style={{
               boxSizing: `border-box`,
               border: `1px solid transparent`,
