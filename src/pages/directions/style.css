@@ -1,14 +1,13 @@
 input{
-  margin-bottom:100px;
-}
-body{
-  background-color:white;
+  margin-bottom:20px!important;
+  margin-top:10px!important;
 }
 .leftBar{
   height: 100%;
   width: 30%;
+  margin-left:20px;
+  margin-top:120px;
 }
 .map{
   height: 100%!important;
-  width: 100%;
 }

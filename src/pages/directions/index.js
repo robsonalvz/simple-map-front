@@ -2,48 +2,69 @@ import React, { Component } from "react";
 import DirectionsMap from "../../components/DirectionsMap";
 import { Row, Col, Button, Divider } from "antd";
 import SearchBox from "../../components/MapSearchBox";
-import "antd/dist/antd.css";
-import "./style.css";
+import "./style.css"
 
 class Directions extends Component {
-  state = {
-    loading: false,
-    iconLoading: false,
-    origin: {
-      lat: "",
-      long: ""
-    },
-    desatination: {
-      lat: "",
-      long: ""
+  constructor(){
+    super();
+    this.state = {
+      loading: false,
+      iconLoading: false,
+      origin: {
+        lat: -7.0970765, long: -34.8433803
+      },
+      destination: {
+        lat: -7.094808, long: -34.841523
+      },
+      refresh: false,
+    };
+  }
+  
+  changeDirection = () =>  {
+    this.setState({ loading: true, refresh: true})
+    this.changeLoading()
+  };
+
+  changeLoading = () => {
+    setTimeout(() => {
+      this.setState({loading: false})
+    }, 3000);
+  }
+
+  onOriginChanged = places => {
+    const origin = {
+      lat: places[0].geometry.location.lat(),
+      long: places[0].geometry.location.lng()
     }
+    this.setState({refresh: false,origin})
   };
-  enterLoading = () => {
-    this.setState({ loading: true });
-  };
-  onPlacesChanged = places => {
-    console.log(places);
-  };
-  enterIconLoading = () => {
-    this.setState({ iconLoading: true });
+  onDestinationChanged = places => {
+    const destination = {
+      lat: places[0].geometry.location.lat(),
+      long: places[0].geometry.location.lng()
+    }
+    this.setState({refresh: false,destination})
   };
   render() {
+    const { origin, destination, refresh} = this.state;
     return (
       <Row>
         <Col span={5}>
           <div className="leftBar">
+            <label>Origem:</label>
             <SearchBox
-              onPlacesChanged={this.onPlacesChanged}
+              onPlacesChanged={(teste)=>console.log(teste)}
               placeholder="Digite o lugar de origem"
             />
+            <label>Parada:</label>
             <SearchBox
-              onPlacesChanged={this.onPlacesChanged}
+              onPlacesChanged={this.onDestinationChanged}
               placeholder="Digite o lugar de parada"
             />
             <Button
-              type="primary"
               loading={this.state.loading}
-              onClick={this.enterLoading}
+              type="primary"
+              onClick={this.changeDirection}
             >
               Roteirizar
             </Button>
@@ -57,8 +78,9 @@ class Directions extends Component {
         <Col span={19}>
           <div className="map">
             <DirectionsMap
-              origin={{ lat: -7.0970765, long: -34.8433803 }}
-              desatination={{ lat: -7.094808, long: -34.841523 }}
+              refresh={refresh}
+              origin={origin}
+              destination={destination}
               googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyCJcuxbD-Zq9mq_Qv4PdC-t25ogbFzn460&v=3.exp&libraries=geometry,drawing,places"
               loadingElement={<div style={{ height: `100%` }} />}
               containerElement={<div style={{ height: `100vh` }} />}

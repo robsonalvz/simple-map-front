@@ -38,10 +38,10 @@ class MapSearchBox extends Component {
     );
   }
 }
-const SearchBoxWithScript = withScriptjs(MapSearchBox);
+const SearchBoxWrap = withScriptjs(MapSearchBox);
 
 const SearchBox = ({onPlacesChanged, placeholder }) => 
-  <SearchBoxWithScript
+  <SearchBoxWrap
     onPlacesChanged={onPlacesChanged}
     placeholder={placeholder}
     googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyCJcuxbD-Zq9mq_Qv4PdC-t25ogbFzn460&v=3.exp&libraries=geometry,drawing,places"
