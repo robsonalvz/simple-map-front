@@ -1,16 +1,7 @@
 import React, { Component } from "react";
 import DirectionsMap from "../../components/Maps/DirectionsMap";
 import SearchBox from "../../components/Maps/MapSearchBox";
-import {
-  Layout,
-  Menu,
-  Button,
-  Divider,
-  Icon,
-  Typography,
-  Row,
-  Col
-} from "antd";
+import { Layout, Button, Divider, Icon, Typography } from "antd";
 import "./style.css";
 const { Text } = Typography;
 const { Content, Sider } = Layout;
@@ -29,18 +20,20 @@ class Directions extends Component {
       iconLoading: false,
       origin: {},
       destinations: [{}],
-      refresh: false,
+      refresh: false
     };
   }
   remove = index => {
-    const {destinations}  = this.state;
+    const { destinations } = this.state;
     destinations.splice(index, 1);
-    this.setState({ destinations: destinations })
+    this.setState({ destinations: destinations });
   };
   add = () => {
-    this.setState({
-      destinations: [...this.state.destinations, {}]
-    });
+    if (this.state.destinations.length <= 5) {
+      this.setState({
+        destinations: [...this.state.destinations, {}]
+      });
+    } 
   };
   changeDirection = () => {
     this.setState({ loading: true, refresh: true }, () => this.changeLoading());
@@ -60,30 +53,21 @@ class Directions extends Component {
     this.setState({ origin });
   };
   onDestinationChanged = (places, index) => {
+    console.log(places);
     const destination = {
       lat: places[0].geometry.location.lat(),
       long: places[0].geometry.location.lng()
     };
     const { destinations } = this.state;
     destinations[index] = destination;
-    this.setState({destinations: destinations })
+    this.setState({ destinations: destinations });
   };
   render() {
     const { origin, destinations, refresh } = this.state;
-    console.log(this.state)
+    console.log(this.state);
     return (
       <Layout>
-        <Sider
-          breakpoint="lg"
-          collapsedWidth="0"
-          onBreakpoint={broken => {
-            console.log(broken);
-          }}
-          width={260}
-          onCollapse={(collapsed, type) => {
-            console.log(collapsed, type);
-          }}
-        >
+        <Sider breakpoint="lg" collapsedWidth="0" width={260}>
           <h2>Simple router</h2>
           <div className="leftBar">
             <label>Origem:</label>
@@ -93,40 +77,35 @@ class Directions extends Component {
               {...props}
             />
             <label>Parada:</label>
-            {
-              this.state.destinations.map((destination, index) =>{
-                return (
-                  <div className="destination">  
+            {this.state.destinations.map((destination, index) => {
+              return (
+                <div className="destination">
                   <SearchBox
                     key={index}
-                    onPlacesChanged={(places) => this.onDestinationChanged(places, index)}
+                    onPlacesChanged={places =>
+                      this.onDestinationChanged(places, index)
+                    }
                     placeholder="Digite o lugar de parada"
                     {...props}
-                  />                  
-                  { 
-                    index === this.state.destinations.length-1 
-                    ?
-                      <Icon
-                        onClick={this.add}
-                        theme="twoTone"
-                        type="plus-circle"
-                        className="plus-icon"
-                      />
-                    :
-                      <Icon
-                        type="minus-circle-o"
-                        theme="twoTone"
-                        className="plus-icon"
-                        onClick={() => this.remove(index)}
+                  />
+                  {index === this.state.destinations.length - 1 ? (
+                    <Icon
+                      onClick={this.add}
+                      theme="twoTone"
+                      type="plus-circle"
+                      className="plus-icon"
                     />
-                  }
-                 
-                 
+                  ) : (
+                    <Icon
+                      type="minus-circle-o"
+                      theme="twoTone"
+                      className="plus-icon"
+                      onClick={() => this.remove(index)}
+                    />
+                  )}
                 </div>
-        
-                )
-              })
-            }
+              );
+            })}
             <Button loading={this.state.loading} onClick={this.changeDirection}>
               Roteirizar
             </Button>
@@ -139,14 +118,12 @@ class Directions extends Component {
         </Sider>
         <Layout>
           <Content>
-            <div>
-              <DirectionsMap
-                refresh={refresh}
-                origin={origin}
-                destination={destinations[0]}
-                {...props}
-              />
-            </div>
+            <DirectionsMap
+              refresh={refresh}
+              origin={origin}
+              destination={destinations[0]}
+              {...props}
+            />
           </Content>
         </Layout>
       </Layout>

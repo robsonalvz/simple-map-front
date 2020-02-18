@@ -19,8 +19,8 @@ class DirectionsMap extends Component {
     return false;
   }  
   route(){
-    const {  origin, destination } = this.props;
-    if (typeof(origin) !== 'undefined' && typeof(destination) !== 'undefined' ) {
+    const {  origin, destination, waypoints } = this.props;
+    if (typeof(origin) !== 'undefined' && typeof(destination) !== 'undefined' && typeof(waypoints) !== 'undefined' ) {
       const DirectionsService = new google.maps.DirectionsService();
       DirectionsService.route(
         {
@@ -32,7 +32,8 @@ class DirectionsMap extends Component {
             destination.lat,
             destination.long
           ),
-          travelMode: google.maps.TravelMode.DRIVING
+          travelMode: google.maps.TravelMode.DRIVING,
+          waypoints: waypoints
         },
         (result, status) => {
           if (status === google.maps.DirectionsStatus.OK) {
@@ -60,7 +61,7 @@ class DirectionsMap extends Component {
         defaultZoom={15}
       >
         {this.state.directions && (
-          <DirectionsRenderer directions={this.state.directions} />
+          <DirectionsRenderer directions={this.state.directions}  />
         )}
       </GoogleMap>
     );

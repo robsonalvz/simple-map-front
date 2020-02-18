@@ -22,9 +22,7 @@ class MapSearchBox extends Component {
       }
     }
   }
-  componentDidMount() {
-    
-  }
+
   render() {
     return (
       <div data-standalone-searchbox="">
