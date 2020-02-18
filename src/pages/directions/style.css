@@ -1,13 +1,55 @@
 input{
-  margin-bottom:20px!important;
   margin-top:10px!important;
+  color:black!important;
+}
+label{
+  color: white!important;
+}
+button{
+  margin-top:20px!important;
 }
 .leftBar{
   height: 100%;
   width: 30%;
   margin-left:20px;
-  margin-top:120px;
+  margin-top:30px;
 }
 .map{
   height: 100%!important;
+}
+
+.sider{
+  color:black!important;
+}
+h2{
+  color:#f1f1f1!important;
+  text-align: center;
+  margin-top:20px!important;
+}
+.infos{
+  position: absolute;
+  line-height: 30px;;
+  bottom:50px;
+  left:0;
+  right: 0;
+  bottom:0;
+  padding-left:20px;
+  padding-bottom:50px;
+}
+.infos span{
+  color:white!important;
+}
+.sectionDivider{
+  position:absolute;
+  width: 260px!important;
+  height: 1px!important;
+  margin-left:-20px!important;
+}
+.destination{
+  display: flex;
+  align-items: flex-start;
+}
+.plus-icon{
+  margin-top:20px;
+  margin-left:10px;
 }

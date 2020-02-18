@@ -5,9 +5,10 @@ import './style.css';
 
 
 class MapSearchBox extends Component {
-  componentWillMount() {
+  constructor(){
+    super();
     const refs = {};
-    this.setState({
+    this.state = {
       places: [],
       onSearchBoxMounted: ref => {
         refs.searchBox = ref;
@@ -19,7 +20,10 @@ class MapSearchBox extends Component {
         });
         this.props.onPlacesChanged(this.state.places);
       }
-    });
+    }
+  }
+  componentDidMount() {
+    
   }
   render() {
     return (
@@ -38,15 +42,5 @@ class MapSearchBox extends Component {
     );
   }
 }
-const SearchBoxWrap = withScriptjs(MapSearchBox);
+export default withScriptjs(MapSearchBox);
 
-const SearchBox = ({onPlacesChanged, placeholder }) => 
-  <SearchBoxWrap
-    onPlacesChanged={onPlacesChanged}
-    placeholder={placeholder}
-    googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyCJcuxbD-Zq9mq_Qv4PdC-t25ogbFzn460&v=3.exp&libraries=geometry,drawing,places"
-    loadingElement={<div style={{ height: `100%` }} />}
-    containerElement={<div style={{ height: `400px` }} />}
-    mapElement={<div style={{ height: `100%` }} />}
-  />
-export default SearchBox;
