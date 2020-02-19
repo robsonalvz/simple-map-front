@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import DirectionsMap from "../../components/Maps/DirectionsMap";
 import SearchBox from "../../components/Maps/MapSearchBox";
-import { Layout, Button, Divider, Icon, Typography } from "antd";
+import { Layout, Button, Divider, Icon, Typography, notification } from "antd";
 import "./style.css";
 const { Text } = Typography;
 const { Content, Sider } = Layout;
@@ -17,54 +17,67 @@ class Directions extends Component {
     super();
     this.state = {
       loading: false,
-      iconLoading: false,
-      origin: {},
-      destinations: [{}],
+      origin: {
+        lat: null,
+        long: null},
+      destination : {
+        lat: null,
+        long: null
+      },
+      waypoints: [],
       refresh: false
     };
   }
   remove = index => {
-    const { destinations } = this.state;
-    destinations.splice(index, 1);
-    this.setState({ destinations: destinations });
+    const { waypoints } = this.state;
+    waypoints.splice(index, 1);
+    this.setState({ waypoints });
   };
   add = () => {
-    if (this.state.destinations.length <= 5) {
+    if (this.state.waypoints.length <= 5) {
       this.setState({
-        destinations: [...this.state.destinations, {}]
+        waypoints: [...this.state.waypoints, {}]
       });
-    } 
+    } else {
+      notification.open({
+        message: "Número máximo de pontos",
+        description: "O número máximo de rotas foi excedido. "
+      });
+    }
   };
   changeDirection = () => {
-    this.setState({ loading: true, refresh: true }, () => this.changeLoading());
+    this.setState({ loading: true, refresh: true });
+    this.changeLoading();
   };
 
   changeLoading = () => {
     setTimeout(() => {
-      this.setState({ loading: false });
-    }, 3000);
+      this.setState({ loading: false, refresh: false });
+    }, 500);
   };
 
   onOriginChanged = places => {
-    const origin = {
-      lat: places[0].geometry.location.lat(),
-      long: places[0].geometry.location.lng()
-    };
+    const origin = this.getLatLong(places)
     this.setState({ origin });
   };
-  onDestinationChanged = (places, index) => {
-    console.log(places);
-    const destination = {
+  onDestinationChanged = (places) => {
+    const destination = this.getLatLong(places)
+    this.setState({ destination });
+  };
+  onWayPointChanged = (places, index) => {
+    const waypoint = this.getLatLong(places)
+    const { waypoints } = this.state;
+    waypoints[index] = waypoint;
+    this.setState({ waypoints: waypoints });
+  };
+  getLatLong(places){
+    return {
       lat: places[0].geometry.location.lat(),
       long: places[0].geometry.location.lng()
-    };
-    const { destinations } = this.state;
-    destinations[index] = destination;
-    this.setState({ destinations: destinations });
-  };
+    }
+  }
   render() {
-    const { origin, destinations, refresh } = this.state;
-    console.log(this.state);
+    const { origin, destination } = this.state;
     return (
       <Layout>
         <Sider breakpoint="lg" collapsedWidth="0" width={260}>
@@ -77,35 +90,41 @@ class Directions extends Component {
               {...props}
             />
             <label>Parada:</label>
-            {this.state.destinations.map((destination, index) => {
+            <div className="destination">
+              <SearchBox
+                onPlacesChanged={places => this.onDestinationChanged(places)}
+                placeholder="Digite o lugar de parada"
+                {...props}
+              />
+              <Icon
+                onClick={this.add}
+                theme="twoTone"
+                type="plus-circle"
+                className="plus-icon"
+              />
+            </div>
+            {this.state.waypoints.map((point, index) => {
               return (
                 <div className="destination">
                   <SearchBox
                     key={index}
                     onPlacesChanged={places =>
-                      this.onDestinationChanged(places, index)
+                      this.onWayPointChanged(places, index)
                     }
                     placeholder="Digite o lugar de parada"
                     {...props}
                   />
-                  {index === this.state.destinations.length - 1 ? (
-                    <Icon
-                      onClick={this.add}
-                      theme="twoTone"
-                      type="plus-circle"
-                      className="plus-icon"
-                    />
-                  ) : (
-                    <Icon
-                      type="minus-circle-o"
-                      theme="twoTone"
-                      className="plus-icon"
-                      onClick={() => this.remove(index)}
-                    />
-                  )}
+                  <Icon
+                    type="minus-circle-o"
+                    theme="twoTone"
+                    className="plus-icon"
+                    onClick={() => this.remove(index)}
+                  />
+                  )
                 </div>
               );
             })}
+
             <Button loading={this.state.loading} onClick={this.changeDirection}>
               Roteirizar
             </Button>
@@ -119,9 +138,10 @@ class Directions extends Component {
         <Layout>
           <Content>
             <DirectionsMap
-              refresh={refresh}
+              refresh={this.state.refresh}
               origin={origin}
-              destination={destinations[0]}
+              waypoints={this.state.waypoints}
+              destination={destination}
               {...props}
             />
           </Content>
