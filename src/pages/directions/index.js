@@ -33,10 +33,8 @@ class Directions extends Component {
     };
   }
   remove = index => {
-    console.log(this.state.waypoints)
     const { waypoints } = this.state;
     waypoints.splice(index, 1);
-    console.log(waypoints)
     this.setState({ waypoints });
   };
   add = () => {
@@ -50,7 +48,6 @@ class Directions extends Component {
         description: "O número máximo de rotas foi excedido. "
       });
     }
-    console.log(this.state.waypoints)
   };
   changeDirection = () => {
     this.setState({ loading: true, refresh: true });
@@ -65,8 +62,8 @@ class Directions extends Component {
 
   changeLoading = () => {
     setTimeout(() => {
-      this.setState({ loading: false, refresh: false });
-    }, 500);
+      this.setState({ refresh: false });
+    }, 700);
   };
 
   onOriginChanged = places => {
@@ -91,7 +88,6 @@ class Directions extends Component {
   }
   render() {
     const { origin, destination } = this.state;
-    console.log("Ola",process.env.REACT_APP_GOOGLE_MAPS_API_KEY)
     return (
       <Layout>
         <Sider breakpoint="lg" collapsedWidth="0" width={260}>
@@ -117,6 +113,8 @@ class Directions extends Component {
                 className="plus-icon"
               />
             </div>
+            <br/>
+            {this.state.waypoints.length>0 && <label>Pontos de parada:</label>}
             {this.state.waypoints.map((point, index) => {
               return (
                 <div key={index} className="destination">
@@ -127,18 +125,19 @@ class Directions extends Component {
                     placeholder="Digite o lugar de parada"
                     {...googleProps}
                   />
+                  {this.state.waypoints.length-1 === index &&
                   <Icon
                     type="minus-circle-o"
                     theme="twoTone"
                     className="plus-icon"
                     onClick={() => this.remove(index)}
-                  />
+                  />}
                   )
                 </div>
               );
             })}
 
-            <Button loading={this.state.loading} onClick={this.changeDirection}>
+            <Button loading={this.props.loading} onClick={this.changeDirection}>
               Roteirizar
             </Button>
             <div className="infos">
