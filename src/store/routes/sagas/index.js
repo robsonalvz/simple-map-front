@@ -14,7 +14,7 @@ const {
 
 function* registerRouteSaga(action) {
   try {
-    yield call(api.post, "/routes", action.payload);
+    yield call(api.post, "maps/routes", action.payload);
     yield put(registerRouteSuccess(action.payload));
   } catch (error) {
     yield put(registerRouteFail(error));

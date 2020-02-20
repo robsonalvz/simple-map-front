@@ -1,17 +1,21 @@
 import React, { Component } from "react";
 import DirectionsMap from "../../components/Maps/DirectionsMap";
 import SearchBox from "../../components/Maps/MapSearchBox";
+import * as Actions from '../../store/root/actions';
 import { Layout, Button, Divider, Icon, Typography, notification } from "antd";
 import "./style.css";
+import { bindActionCreators } from "redux";
+import { connect } from "react-redux";
 const { Text } = Typography;
 const { Content, Sider } = Layout;
-const props = {
+const googleProps = {
   googleMapURL:
-    "https://maps.googleapis.com/maps/api/js?key=AIzaSyCJcuxbD-Zq9mq_Qv4PdC-t25ogbFzn460&v=3.exp&libraries=geometry,drawing,places",
-  loadingElement: <div style={{ height: `100%` }} />,
-  containerElement: <div style={{ height: `100vh` }} />,
-  mapElement: <div style={{ height: `100%` }} />
+    `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&v=3.exp&libraries=geometry,drawing,places`,
+    loadingElement: <div style={{ height: `100%` }} />,
+    containerElement: <div style={{ height: `100vh` }} />,
+    mapElement: <div style={{ height: `100%` }} />
 };
+
 class Directions extends Component {
   constructor() {
     super();
@@ -29,8 +33,10 @@ class Directions extends Component {
     };
   }
   remove = index => {
+    console.log(this.state.waypoints)
     const { waypoints } = this.state;
     waypoints.splice(index, 1);
+    console.log(waypoints)
     this.setState({ waypoints });
   };
   add = () => {
@@ -44,9 +50,16 @@ class Directions extends Component {
         description: "O número máximo de rotas foi excedido. "
       });
     }
+    console.log(this.state.waypoints)
   };
   changeDirection = () => {
     this.setState({ loading: true, refresh: true });
+    const route = {
+      origin: this.state.origin,
+      destination: this.state.destination,
+      waypoints: this.state.waypoints
+    }
+    this.props.registerRouteRequest(route)
     this.changeLoading();
   };
 
@@ -60,7 +73,7 @@ class Directions extends Component {
     const origin = this.getLatLong(places)
     this.setState({ origin });
   };
-  onDestinationChanged = (places) => {
+  onDestinationChanged = places => {
     const destination = this.getLatLong(places)
     this.setState({ destination });
   };
@@ -70,7 +83,7 @@ class Directions extends Component {
     waypoints[index] = waypoint;
     this.setState({ waypoints: waypoints });
   };
-  getLatLong(places){
+  getLatLong = places =>{
     return {
       lat: places[0].geometry.location.lat(),
       long: places[0].geometry.location.lng()
@@ -78,6 +91,7 @@ class Directions extends Component {
   }
   render() {
     const { origin, destination } = this.state;
+    console.log(origin, destination)
     return (
       <Layout>
         <Sider breakpoint="lg" collapsedWidth="0" width={260}>
@@ -87,14 +101,14 @@ class Directions extends Component {
             <SearchBox
               onPlacesChanged={this.onOriginChanged}
               placeholder="Digite o lugar de origem"
-              {...props}
+              {...googleProps}
             />
             <label>Parada:</label>
             <div className="destination">
               <SearchBox
                 onPlacesChanged={places => this.onDestinationChanged(places)}
                 placeholder="Digite o lugar de parada"
-                {...props}
+                {...googleProps}
               />
               <Icon
                 onClick={this.add}
@@ -105,14 +119,13 @@ class Directions extends Component {
             </div>
             {this.state.waypoints.map((point, index) => {
               return (
-                <div className="destination">
+                <div key={index} className="destination">
                   <SearchBox
-                    key={index}
                     onPlacesChanged={places =>
                       this.onWayPointChanged(places, index)
                     }
                     placeholder="Digite o lugar de parada"
-                    {...props}
+                    {...googleProps}
                   />
                   <Icon
                     type="minus-circle-o"
@@ -142,7 +155,7 @@ class Directions extends Component {
               origin={origin}
               waypoints={this.state.waypoints}
               destination={destination}
-              {...props}
+              {...googleProps}
             />
           </Content>
         </Layout>
@@ -150,4 +163,11 @@ class Directions extends Component {
     );
   }
 }
-export default Directions;
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(Actions, dispatch);
+
+const mapStateToProps = state => ({
+  loading: state.maps.loading,
+  error: state.maps.error,
+});
+export default connect(mapStateToProps, mapDispatchToProps )(Directions);
