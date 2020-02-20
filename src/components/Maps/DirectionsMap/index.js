@@ -15,8 +15,8 @@ class DirectionsMap extends Component {
       refresh: false,
     };
   }
-  shouldComponentUpdate(prepProps) {
-    if (this.props.refresh !== prepProps.refresh) {
+  shouldComponentUpdate(prevProps) {
+    if (this.props.refresh !== prevProps.refresh) {
       return true;
     }
     return false;
