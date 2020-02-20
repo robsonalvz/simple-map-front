@@ -18,7 +18,9 @@ class DirectionsMap extends Component {
     if (props.refresh) return true;
     return false;
   }
-
+  onChangeDirection (result){
+    this.props.onChangeDirection(result);
+  }
   route() {
     const { origin, destination, waypoints } = this.props;
     const DirectionsService = new google.maps.DirectionsService();
@@ -37,10 +39,10 @@ class DirectionsMap extends Component {
       },
       (result, status) => {
         if (status === google.maps.DirectionsStatus.OK) {
+          this.onChangeDirection(result);
           this.setState({
             directions: result
           });
-          console.log("Atualizado");
         } else {
           console.error(`error fetching directions ${result}`);
         }
@@ -55,9 +57,9 @@ class DirectionsMap extends Component {
     this.route();
   }
   render() {
-    console.log("Directions", this.state.directions);
     return (
       <GoogleMap
+        onChangeDirection={this.state.onChangeDirection}
         defaultCenter={new google.maps.LatLng(-7.0970765, -34.8433803)}
         defaultZoom={15}
       >

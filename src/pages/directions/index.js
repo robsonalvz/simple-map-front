@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import DirectionsMap from "../../components/Maps/DirectionsMap";
 import SearchBox from "../../components/Maps/MapSearchBox";
-import Actions from '../../store/root/actions';
+import Actions from "../../store/root/actions";
 import { Layout, Button, Divider, Icon, Typography, notification } from "antd";
 import "./style.css";
 import { bindActionCreators } from "redux";
@@ -9,11 +9,10 @@ import { connect } from "react-redux";
 const { Text } = Typography;
 const { Content, Sider } = Layout;
 const googleProps = {
-  googleMapURL:
-    `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&v=3.exp&libraries=geometry,drawing,places`,
-    loadingElement: <div style={{ height: `100%` }} />,
-    containerElement: <div style={{ height: `100vh` }} />,
-    mapElement: <div style={{ height: `100%` }} />
+  googleMapURL: `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&v=3.exp&libraries=geometry,drawing,places`,
+  loadingElement: <div style={{ height: `100%` }} />,
+  containerElement: <div style={{ height: `100vh` }} />,
+  mapElement: <div style={{ height: `100%` }} />
 };
 
 class Directions extends Component {
@@ -23,12 +22,21 @@ class Directions extends Component {
       loading: false,
       origin: {
         lat: null,
-        long: null},
-      destination : {
+        long: null
+      },
+      destination: {
         lat: null,
         long: null
       },
       waypoints: [],
+      distance: {
+        text: "",
+        value: 0
+      },
+      duration: {
+        text: "",
+        value: 0
+      },
       refresh: false
     };
   }
@@ -49,43 +57,50 @@ class Directions extends Component {
       });
     }
   };
-  changeDirection = () => {
+  submitRoute = () => {
     this.setState({ loading: true, refresh: true });
     const route = {
       origin: this.state.origin,
       destination: this.state.destination,
       waypoints: this.state.waypoints
-    }
-    this.props.registerRouteRequest(route)
+    };
+    this.props.registerRouteRequest(route);
     this.changeLoading();
+  };
+
+  onChangeDirection = direction => {
+    this.setState({
+      distance: direction.routes[0].legs[0].distance,
+      duration: direction.routes[0].legs[0].duration
+    });
   };
 
   changeLoading = () => {
     setTimeout(() => {
       this.setState({ refresh: false });
-    }, 700);
+    }, 800);
   };
 
   onOriginChanged = places => {
-    const origin = this.getLatLong(places)
+    const origin = this.getLatLong(places);
     this.setState({ origin });
   };
   onDestinationChanged = places => {
-    const destination = this.getLatLong(places)
+    const destination = this.getLatLong(places);
     this.setState({ destination });
   };
   onWayPointChanged = (places, index) => {
-    const waypoint = this.getLatLong(places)
+    const waypoint = this.getLatLong(places);
     const { waypoints } = this.state;
     waypoints[index] = waypoint;
     this.setState({ waypoints: waypoints });
   };
-  getLatLong = places =>{
+  getLatLong = places => {
     return {
       lat: places[0].geometry.location.lat(),
       long: places[0].geometry.location.lng()
-    }
-  }
+    };
+  };
   render() {
     const { origin, destination } = this.state;
     return (
@@ -113,8 +128,10 @@ class Directions extends Component {
                 className="plus-icon"
               />
             </div>
-            <br/>
-            {this.state.waypoints.length>0 && <label>Pontos de parada:</label>}
+            <br />
+            {this.state.waypoints.length > 0 && (
+              <label>Pontos de parada:</label>
+            )}
             {this.state.waypoints.map((point, index) => {
               return (
                 <div key={index} className="destination">
@@ -125,31 +142,33 @@ class Directions extends Component {
                     placeholder="Digite o lugar de parada"
                     {...googleProps}
                   />
-                  {this.state.waypoints.length-1 === index &&
-                  <Icon
-                    type="minus-circle-o"
-                    theme="twoTone"
-                    className="plus-icon"
-                    onClick={() => this.remove(index)}
-                  />}
+                  {this.state.waypoints.length - 1 === index && (
+                    <Icon
+                      type="minus-circle-o"
+                      theme="twoTone"
+                      className="plus-icon"
+                      onClick={() => this.remove(index)}
+                    />
+                  )}
                   )
                 </div>
               );
             })}
 
-            <Button loading={this.props.loading} onClick={this.changeDirection}>
+            <Button loading={this.props.loading} onClick={this.submitRoute}>
               Roteirizar
             </Button>
             <div className="infos">
               <Divider className="sectionDivider" />
-              <Text>Distância: 120 kml</Text> <br />
-              <Text>Tempo estimado: 2 horas </Text>
+              <Text>Distância: {this.state.distance.text}</Text> <br />
+              <Text>Tempo estimado: {this.state.duration.text} </Text>
             </div>
           </div>
         </Sider>
         <Layout>
           <Content>
             <DirectionsMap
+              onChangeDirection={direction => this.onChangeDirection(direction)}
               refresh={this.state.refresh}
               origin={origin}
               waypoints={this.state.waypoints}
@@ -162,11 +181,10 @@ class Directions extends Component {
     );
   }
 }
-const mapDispatchToProps = dispatch =>
-  bindActionCreators(Actions, dispatch);
+const mapDispatchToProps = dispatch => bindActionCreators(Actions, dispatch);
 
 const mapStateToProps = state => ({
   loading: state.routes.loading,
-  error: state.routes.error,
+  error: state.routes.error
 });
-export default connect(mapStateToProps, mapDispatchToProps )(Directions);
+export default connect(mapStateToProps, mapDispatchToProps)(Directions);
