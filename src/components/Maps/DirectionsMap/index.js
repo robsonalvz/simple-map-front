@@ -11,11 +11,14 @@ class DirectionsMap extends Component {
   constructor() {
     super();
     this.state = {
-      directions: ""
+      directions: "",
+      refresh: false,
     };
   }
-  shouldComponentUpdate(props) {
-    if (props.refresh) return true;
+  shouldComponentUpdate(prepProps) {
+    if (this.props.refresh !== prepProps.refresh) {
+      return true;
+    }
     return false;
   }
   onChangeDirection (result){

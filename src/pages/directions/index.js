@@ -59,10 +59,13 @@ class Directions extends Component {
   };
   submitRoute = () => {
     this.setState({ loading: true, refresh: true });
+    const { origin, destination, waypoints, duration, distance } = this.state;
     const route = {
-      origin: this.state.origin,
-      destination: this.state.destination,
-      waypoints: this.state.waypoints
+      origin,
+      destination,
+      waypoints,
+      duration,
+      distance
     };
     this.props.registerRouteRequest(route);
     this.changeLoading();
@@ -105,7 +108,7 @@ class Directions extends Component {
     const { origin, destination } = this.state;
     return (
       <Layout>
-        <Sider breakpoint="lg" collapsedWidth="0" width={260}>
+        <Sider breakpoint="lg" collapsedWidth="0" width={300}>
           <h2>Simple router</h2>
           <div className="leftBar">
             <label>Origem:</label>
