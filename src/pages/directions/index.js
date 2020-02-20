@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import DirectionsMap from "../../components/Maps/DirectionsMap";
 import SearchBox from "../../components/Maps/MapSearchBox";
-import * as Actions from '../../store/root/actions';
+import Actions from '../../store/root/actions';
 import { Layout, Button, Divider, Icon, Typography, notification } from "antd";
 import "./style.css";
 import { bindActionCreators } from "redux";
@@ -91,7 +91,7 @@ class Directions extends Component {
   }
   render() {
     const { origin, destination } = this.state;
-    console.log(origin, destination)
+    console.log("Ola",process.env.REACT_APP_GOOGLE_MAPS_API_KEY)
     return (
       <Layout>
         <Sider breakpoint="lg" collapsedWidth="0" width={260}>
@@ -167,7 +167,7 @@ const mapDispatchToProps = dispatch =>
   bindActionCreators(Actions, dispatch);
 
 const mapStateToProps = state => ({
-  loading: state.maps.loading,
-  error: state.maps.error,
+  loading: state.routes.loading,
+  error: state.routes.error,
 });
 export default connect(mapStateToProps, mapDispatchToProps )(Directions);

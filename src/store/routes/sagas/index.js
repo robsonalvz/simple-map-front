@@ -21,6 +21,6 @@ function* registerRouteSaga(action) {
   }
 }
 
-export function* rootDocumentSaga() {
+export function* rootRouteSaga() {
   yield all([takeLatest(REGISTER_ROUTE_REQUEST, registerRouteSaga)]);
 }
