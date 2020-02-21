@@ -42,3 +42,10 @@ cp .env.example .env
 ```
 yarn start
 ```
+## Rodando o projeto com o Docker
+
+Fique a vontade para colocar a porta desejada,  e o nome desejado para a imagem/container.
+```
+docker build -t simple-map-front .
+docker run --name simple-map-front -p 3000:3000 simple-map-front
+```
