@@ -76,8 +76,8 @@ class Directions extends Component {
         duration,
         distance
       };
-      this.props.registerRouteRequest(route);
       this.changeLoading();
+      this.props.registerRouteRequest(route);
   };
 
   onChangeDirection = direction => {

@@ -10,7 +10,7 @@ Frontend para a aplicação SimpleMap
 - A arquitetura do serviço foi construida com ReactJs, Redux e Redux saga para facilitar a implementação e gerenciamento de estado dentro da aplicação. 
 
 Os módulos do redux e redux saga foram separados da seguinte forma:
--Store
+- Store
   - Root
       - actions
       - reducers
