@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import DirectionsMap from "../../components/Maps/DirectionsMap";
-import SearchBox from "../../components/Maps/MapSearchBox";
+import DirectionsMap from "../../components/maps/DirectionsMap";
+import SearchBox from "../../components/maps/MapSearchBox";
 import Actions from "../../store/root/actions";
 import { Layout, Button, Divider, Icon, Typography, notification } from "antd";
 import "./style.css";
