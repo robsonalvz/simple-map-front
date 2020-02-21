@@ -1,11 +1,11 @@
 import React, { Component } from "react";
-import DirectionsMap from "../../components/maps/DirectionsMap";
-import SearchBox from "../../components/maps/MapSearchBox";
 import Actions from "../../store/root/actions";
 import { Layout, Button, Divider, Icon, Typography, notification } from "antd";
 import "./style.css";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
+import MapSearchBox from "../../components/Maps/MapSearchBox";
+import DirectionsMap from "../../components/Maps/DirectionsMap";
 const { Text } = Typography;
 const { Content, Sider } = Layout;
 const googleProps = {
@@ -132,7 +132,7 @@ class Directions extends Component {
           <h2>Simple router</h2>
           <div className="leftBar">
             <label>Origem:</label>
-            <SearchBox
+            <MapSearchBox
               onPlacesChanged={this.onOriginChanged}
               placeholder="Digite o lugar de origem"
               {...googleProps}
@@ -140,7 +140,7 @@ class Directions extends Component {
             <br />
             <label>Parada:</label>
             <div className="destination">
-              <SearchBox
+              <MapSearchBox
                 onPlacesChanged={places => this.onDestinationChanged(places)}
                 placeholder="Digite o lugar de parada"
                 {...googleProps}
@@ -151,7 +151,7 @@ class Directions extends Component {
             {waypoints.map((point, index) => {
               return (
                 <div key={index} className="destination">
-                  <SearchBox
+                  <MapSearchBox
                     onPlacesChanged={places =>
                       this.onWayPointChanged(places, index)
                     }
