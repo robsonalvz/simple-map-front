@@ -17,7 +17,7 @@ Os módulos do redux e redux saga foram separados da seguinte forma:
       - sagas
   - Maps
       ....
-  index.js
+  - index.js
 
 ## Instalação Local
 
