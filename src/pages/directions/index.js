@@ -19,7 +19,6 @@ class Directions extends Component {
   constructor() {
     super();
     this.state = {
-      loading: false,
       origin: {
         lat: null,
         long: null
@@ -37,7 +36,8 @@ class Directions extends Component {
         text: "",
         value: 0
       },
-      refresh: false
+      refresh: false,
+      directions: ''
     };
   }
   remove = index => {
@@ -46,7 +46,16 @@ class Directions extends Component {
     this.setState({ waypoints });
   };
   add = () => {
-    if (this.state.waypoints.length <= 5) {
+    const { waypoints } = this.state;
+    if (
+      waypoints.length !== 0 &&
+      Object.keys(waypoints[waypoints.length - 1]).length === 0
+    ) {
+      notification.open({
+        message: "Campos obrigatórios",
+        description: "Preencha a ultimo local para adicionar um novo. "
+      });
+    } else if (this.state.waypoints.length <= 5) {
       this.setState({
         waypoints: [...this.state.waypoints, {}]
       });
@@ -58,17 +67,17 @@ class Directions extends Component {
     }
   };
   submitRoute = () => {
-    this.setState({ loading: true, refresh: true });
+    this.setState({ refresh: !this.state.refresh });
     const { origin, destination, waypoints, duration, distance } = this.state;
-    const route = {
-      origin,
-      destination,
-      waypoints,
-      duration,
-      distance
-    };
-    this.props.registerRouteRequest(route);
-    this.changeLoading();
+      const route = {
+        origin,
+        destination,
+        waypoints,
+        duration,
+        distance
+      };
+      this.props.registerRouteRequest(route);
+      this.changeLoading();
   };
 
   onChangeDirection = direction => {
@@ -105,7 +114,14 @@ class Directions extends Component {
     };
   };
   render() {
-    const { origin, destination } = this.state;
+    const {
+      origin,
+      destination,
+      distance,
+      waypoints,
+      duration,
+      refresh
+    } = this.state;
     return (
       <Layout>
         <Sider breakpoint="lg" collapsedWidth="0" width={300}>
@@ -116,7 +132,8 @@ class Directions extends Component {
               onPlacesChanged={this.onOriginChanged}
               placeholder="Digite o lugar de origem"
               {...googleProps}
-            />
+            />{" "}
+            <br />
             <label>Parada:</label>
             <div className="destination">
               <SearchBox
@@ -124,18 +141,10 @@ class Directions extends Component {
                 placeholder="Digite o lugar de parada"
                 {...googleProps}
               />
-              <Icon
-                onClick={this.add}
-                theme="twoTone"
-                type="plus-circle"
-                className="plus-icon"
-              />
             </div>
             <br />
-            {this.state.waypoints.length > 0 && (
-              <label>Pontos de parada:</label>
-            )}
-            {this.state.waypoints.map((point, index) => {
+            {waypoints.length > 0 && <label>Pontos de parada:</label>}
+            {waypoints.map((point, index) => {
               return (
                 <div key={index} className="destination">
                   <SearchBox
@@ -145,7 +154,7 @@ class Directions extends Component {
                     placeholder="Digite o lugar de parada"
                     {...googleProps}
                   />
-                  {this.state.waypoints.length - 1 === index && (
+                  {waypoints.length - 1 === index && (
                     <Icon
                       type="minus-circle-o"
                       theme="twoTone"
@@ -153,18 +162,19 @@ class Directions extends Component {
                       onClick={() => this.remove(index)}
                     />
                   )}
-                  )
                 </div>
               );
             })}
-
+            <Button type="dashed" onClick={this.add} style={{ width: "240px" }}>
+              <Icon type="plus" /> Adicionar parada
+            </Button>
             <Button loading={this.props.loading} onClick={this.submitRoute}>
               Roteirizar
             </Button>
             <div className="infos">
               <Divider className="sectionDivider" />
-              <Text>Distância: {this.state.distance.text}</Text> <br />
-              <Text>Tempo estimado: {this.state.duration.text} </Text>
+              <Text>Distância: {distance.text}</Text> <br />
+              <Text>Tempo estimado: {duration.text} </Text>
             </div>
           </div>
         </Sider>
@@ -172,9 +182,9 @@ class Directions extends Component {
           <Content>
             <DirectionsMap
               onChangeDirection={direction => this.onChangeDirection(direction)}
-              refresh={this.state.refresh}
+              refresh={refresh}
               origin={origin}
-              waypoints={this.state.waypoints}
+              waypoints={waypoints}
               destination={destination}
               {...googleProps}
             />

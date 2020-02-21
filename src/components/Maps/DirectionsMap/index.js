@@ -42,10 +42,10 @@ class DirectionsMap extends Component {
       },
       (result, status) => {
         if (status === google.maps.DirectionsStatus.OK) {
-          this.onChangeDirection(result);
           this.setState({
             directions: result
           });
+          this.onChangeDirection(result);
         } else {
           console.error(`error fetching directions ${result}`);
         }
@@ -56,19 +56,13 @@ class DirectionsMap extends Component {
   componentDidUpdate() {
     this.route();
   }
-  componentDidMount() {
-    this.route();
-  }
   render() {
     return (
       <GoogleMap
-        onChangeDirection={this.state.onChangeDirection}
         defaultCenter={new google.maps.LatLng(-7.0970765, -34.8433803)}
         defaultZoom={15}
       >
-        {this.state.directions && (
-          <DirectionsRenderer directions={this.state.directions} />
-        )}
+      {this.state.directions !== '' && <DirectionsRenderer directions={this.state.directions} />}
       </GoogleMap>
     );
   }
