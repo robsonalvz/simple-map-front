@@ -37,7 +37,7 @@ class Directions extends Component {
         value: 0
       },
       refresh: false,
-      directions: ''
+      directions: ""
     };
   }
   remove = index => {
@@ -68,7 +68,10 @@ class Directions extends Component {
   };
   submitRoute = () => {
     this.setState({ refresh: !this.state.refresh });
-    const { origin, destination, waypoints, duration, distance } = this.state;
+    this.changeLoading();
+    let delayToApi = 4000;
+    setTimeout(() => {
+      const { origin, destination, waypoints, duration, distance } = this.state;
       const route = {
         origin,
         destination,
@@ -76,8 +79,8 @@ class Directions extends Component {
         duration,
         distance
       };
-      this.changeLoading();
       this.props.registerRouteRequest(route);
+    }, delayToApi);
   };
 
   onChangeDirection = direction => {
@@ -88,9 +91,10 @@ class Directions extends Component {
   };
 
   changeLoading = () => {
+    let delayRefreshMap = 1000;
     setTimeout(() => {
       this.setState({ refresh: false });
-    }, 800);
+    }, delayRefreshMap);
   };
 
   onOriginChanged = places => {
